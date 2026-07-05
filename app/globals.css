@@ -1,26 +1,65 @@
 @import "tailwindcss";
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  /* Paleta extraída de pertec.cl — tonos claros, sin modo oscuro para este formulario */
+  --color-crema: #faf8f5;
+  --color-tinta: #171411;
+  --color-naranjo: #c85217;
+  --color-naranjo-suave: #e07a3d;
+  --color-teal: #00a080;
+  --color-teal-suave: #35b89b;
+  --color-borde: #e7e1d8;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --color-crema: var(--color-crema);
+  --color-tinta: var(--color-tinta);
+  --color-naranjo: var(--color-naranjo);
+  --color-naranjo-suave: var(--color-naranjo-suave);
+  --color-teal: var(--color-teal);
+  --color-teal-suave: var(--color-teal-suave);
+  --color-borde: var(--color-borde);
+  --font-sans: var(--font-barlow);
+  --font-condensed: var(--font-barlow-condensed);
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-barlow), ui-sans-serif, system-ui, sans-serif;
+}
+
+.font-condensed {
+  font-family: var(--font-barlow-condensed), var(--font-barlow), sans-serif;
+}
+
+/* Etiqueta pequeña con guion naranjo, estilo "FOCO COMERCIAL" del sitio */
+.etiqueta-seccion {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-family: var(--font-barlow-condensed), sans-serif;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  font-size: 0.78rem;
+  color: var(--color-naranjo);
+}
+.etiqueta-seccion::before {
+  content: "";
+  display: inline-block;
+  width: 1.5rem;
+  height: 2px;
+  background: var(--color-naranjo);
+}
+
+input,
+select,
+textarea {
+  color-scheme: light;
+}
+
+/* Autofill de Chrome no debe romper el fondo claro */
+input:-webkit-autofill,
+select:-webkit-autofill {
+  -webkit-box-shadow: 0 0 0 1000px #fff inset;
+  -webkit-text-fill-color: var(--color-tinta);
 }

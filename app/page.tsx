@@ -1,65 +1,111 @@
 import Image from "next/image";
+import Link from "next/link";
+import PostulacionForm from "@/components/PostulacionForm";
+
+const CONFIANZA = [
+  {
+    titulo: "Datos protegidos",
+    texto: "Tu información se transmite cifrada y se almacena con acceso restringido.",
+    icono: (
+      <path
+        d="M6 10.5V8a6 6 0 1112 0v2.5M5 10.5h14a1 1 0 011 1V20a1 1 0 01-1 1H5a1 1 0 01-1-1v-8.5a1 1 0 011-1z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
+  {
+    titulo: "Revisión por especialistas",
+    texto: "Tu postulación es evaluada por el equipo de Reclutamiento de PERTEC.",
+    icono: (
+      <path
+        d="M9 12l2 2 4-4m5 2a9 9 0 11-18 0 9 9 0 0118 0z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
+  {
+    titulo: "100% online",
+    texto: "Completa tu postulación desde cualquier dispositivo, sin papeleo.",
+    icono: (
+      <path
+        d="M12 8v4l3 2M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+        stroke="currentColor"
+        strokeWidth="1.6"
+        strokeLinecap="round"
+        strokeLinejoin="round"
+      />
+    ),
+  },
+];
 
 export default function Home() {
   return (
-    <div className="flex flex-col flex-1 items-center justify-center bg-zinc-50 font-sans dark:bg-black">
-      <main className="flex flex-1 w-full max-w-3xl flex-col items-center justify-between py-32 px-16 bg-white dark:bg-black sm:items-start">
-        <Image
-          className="dark:invert"
-          src="/next.svg"
-          alt="Next.js logo"
-          width={100}
-          height={20}
-          priority
-        />
-        <div className="flex flex-col items-center gap-6 text-center sm:items-start sm:text-left">
-          <h1 className="max-w-xs text-3xl font-semibold leading-10 tracking-tight text-black dark:text-zinc-50">
-            To get started, edit the page.tsx file.
+    <div className="flex flex-1 flex-col bg-crema">
+      <header className="border-b border-borde bg-crema">
+        <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
+          <Image
+            src="/logo-pertec.png"
+            alt="Performance Technologies — PERTEC"
+            width={160}
+            height={40}
+            className="h-9 w-auto object-contain"
+            priority
+          />
+          <a
+            href="https://www.pertec.cl"
+            className="text-sm font-medium text-tinta/60 transition hover:text-naranjo"
+          >
+            www.pertec.cl
+          </a>
+        </div>
+      </header>
+
+      <main className="flex-1">
+        <section className="mx-auto max-w-5xl px-6 pt-14 pb-10 text-center sm:pt-20">
+          <span className="etiqueta-seccion mx-auto">Trabaja con nosotros</span>
+          <h1 className="mx-auto mt-4 max-w-2xl font-condensed text-4xl font-extrabold uppercase leading-tight tracking-tight text-tinta sm:text-5xl">
+            Postula a nuestro equipo
           </h1>
-          <p className="max-w-md text-lg leading-8 text-zinc-600 dark:text-zinc-400">
-            Looking for a starting point or more instructions? Head over to{" "}
-            <a
-              href="https://vercel.com/templates?framework=next.js&utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Templates
-            </a>{" "}
-            or the{" "}
-            <a
-              href="https://nextjs.org/learn?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-              className="font-medium text-zinc-950 dark:text-zinc-50"
-            >
-              Learning
-            </a>{" "}
-            center.
+          <p className="mx-auto mt-4 max-w-xl text-[15px] text-tinta/60">
+            Somos una empresa con foco en continuidad operativa para la gran minería.
+            Cuéntanos de ti y súmate a nuestro equipo de mantenimiento y operaciones.
           </p>
-        </div>
-        <div className="flex flex-col gap-4 text-base font-medium sm:flex-row">
-          <a
-            className="flex h-12 w-full items-center justify-center gap-2 rounded-full bg-foreground px-5 text-background transition-colors hover:bg-[#383838] dark:hover:bg-[#ccc] md:w-[158px]"
-            href="https://vercel.com/new?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            <Image
-              className="dark:invert"
-              src="/vercel.svg"
-              alt="Vercel logomark"
-              width={16}
-              height={16}
-            />
-            Deploy Now
-          </a>
-          <a
-            className="flex h-12 w-full items-center justify-center rounded-full border border-solid border-black/[.08] px-5 transition-colors hover:border-transparent hover:bg-black/[.04] dark:border-white/[.145] dark:hover:bg-[#1a1a1a] md:w-[158px]"
-            href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template-tw&utm_campaign=create-next-app"
-            target="_blank"
-            rel="noopener noreferrer"
-          >
-            Documentation
-          </a>
-        </div>
+
+          <div className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
+            {CONFIANZA.map((item) => (
+              <div
+                key={item.titulo}
+                className="flex flex-col items-center gap-2 rounded-xl border border-borde bg-white px-4 py-5 text-center"
+              >
+                <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-teal">
+                  {item.icono}
+                </svg>
+                <p className="text-sm font-semibold text-tinta">{item.titulo}</p>
+                <p className="text-xs text-tinta/55">{item.texto}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+
+        <section className="px-4 pb-20 sm:px-6">
+          <PostulacionForm />
+        </section>
       </main>
+
+      <footer className="border-t border-borde bg-crema">
+        <div className="mx-auto flex max-w-5xl flex-col items-center gap-2 px-6 py-8 text-center text-xs text-tinta/45">
+          <p>© {new Date().getFullYear()} Performance Technologies SpA. Todos los derechos reservados.</p>
+          <Link href="/politica-privacidad" className="font-medium text-tinta/55 underline-offset-2 hover:text-naranjo hover:underline">
+            Política de privacidad
+          </Link>
+        </div>
+      </footer>
     </div>
   );
 }
