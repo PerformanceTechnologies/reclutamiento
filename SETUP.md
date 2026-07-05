@@ -39,7 +39,7 @@ En Vercel, agrégalas en **Settings → Environment Variables** (Production y Pr
 
 ## 4. Dominio en Vercel
 
-**Settings → Domains** → agrega `reclutamiento.pertec.cl` → sigue la instrucción de Vercel
+**Settings → Domains** → agrega `postular.pertec.cl` → sigue la instrucción de Vercel
 para crear el registro **CNAME** en el proveedor DNS de pertec.cl.
 
 ## 5. Notificación automática (Power Automate)

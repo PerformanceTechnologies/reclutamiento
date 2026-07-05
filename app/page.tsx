@@ -52,9 +52,9 @@ export default function Home() {
           <Image
             src="/logo-pertec.png"
             alt="Performance Technologies — PERTEC"
-            width={160}
-            height={40}
-            className="h-9 w-auto object-contain"
+            width={220}
+            height={170}
+            className="h-16 w-auto object-contain"
             priority
           />
           <a
@@ -77,17 +77,17 @@ export default function Home() {
             Cuéntanos de ti y súmate a nuestro equipo de mantenimiento y operaciones.
           </p>
 
-          <div className="mx-auto mt-10 grid max-w-3xl grid-cols-1 gap-4 sm:grid-cols-3">
+          <div className="mx-auto mt-6 flex max-w-3xl flex-wrap items-center justify-center gap-2">
             {CONFIANZA.map((item) => (
               <div
                 key={item.titulo}
-                className="flex flex-col items-center gap-2 rounded-xl border border-borde bg-white px-4 py-5 text-center"
+                title={item.texto}
+                className="inline-flex items-center gap-1.5 rounded-full border border-borde bg-white px-3 py-1.5"
               >
-                <svg viewBox="0 0 24 24" fill="none" className="h-6 w-6 text-teal">
+                <svg viewBox="0 0 24 24" fill="none" className="h-3.5 w-3.5 shrink-0 text-teal">
                   {item.icono}
                 </svg>
-                <p className="text-sm font-semibold text-tinta">{item.titulo}</p>
-                <p className="text-xs text-tinta/55">{item.texto}</p>
+                <span className="text-xs font-medium text-tinta/75">{item.titulo}</span>
               </div>
             ))}
           </div>
