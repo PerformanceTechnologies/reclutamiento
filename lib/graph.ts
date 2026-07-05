@@ -4,9 +4,8 @@ import type { PostulacionInput } from "./schema";
 
 const GRAPH_SCOPE = "https://graph.microsoft.com/.default";
 
-// Nombre interno de la Lista y de la Biblioteca de documentos en el sitio SharePoint.
-// Deben coincidir con lo creado en el sitio (ver SETUP.md).
-const NOMBRE_LISTA = "Postulaciones";
+// ID de la Lista "Postulaciones" en el sitio RRHHCorporativo (ver SETUP.md).
+const ID_LISTA = "f9f9ce5d-99ba-433e-8316-f1ca8a22d945";
 
 export function credencialesGraphConfiguradas(): boolean {
   return Boolean(
@@ -45,9 +44,9 @@ const DRIVE_ID = () => process.env.SHAREPOINT_DRIVE_ID!;
 export async function existeRutDuplicado(rut: string): Promise<boolean> {
   const graph = await clienteGraph();
   const respuesta = await graph
-    .api(`/sites/${SITE_ID()}/lists/${NOMBRE_LISTA}/items`)
+    .api(`/sites/${SITE_ID()}/lists/${ID_LISTA}/items`)
     .header("Prefer", "HonorNonIndexedQueriesWarningMayFailRandomly")
-    .expand("fields(select=RUT)")
+    .expand("fields($select=RUT)")
     .filter(`fields/RUT eq '${rut.replace(/'/g, "")}'`)
     .get();
 
@@ -80,7 +79,7 @@ export async function crearItemPostulacion(
 ): Promise<void> {
   const graph = await clienteGraph();
 
-  await graph.api(`/sites/${SITE_ID()}/lists/${NOMBRE_LISTA}/items`).post({
+  await graph.api(`/sites/${SITE_ID()}/lists/${ID_LISTA}/items`).post({
     fields: {
       Title: datos.nombreCompleto,
       RUT: datos.rut,
