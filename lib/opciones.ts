@@ -1,11 +1,14 @@
 // Listas de opciones del formulario. Ajustar CARGOS según las vacantes activas de PERTEC.
 
 export const CARGOS = [
-  "Mecánico",
-  "Eléctrico",
-  "Soldador",
-  "Operador",
+  "Ayudante Vulca",
+  "Ayudante Mecánico",
+  "Maestro Mayor",
+  "Maestro Primera",
+  "Mecánico-Soldador",
+  "Prevencionista de Riesgos",
   "Supervisor",
+  "Aseo Industrial",
   "Otro",
 ] as const;
 
