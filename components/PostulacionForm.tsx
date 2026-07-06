@@ -197,9 +197,16 @@ export default function PostulacionForm() {
       noValidate
     >
       {/* Honeypot anti-spam: campo invisible para humanos, atractivo para bots */}
-      <div className="absolute left-[-9999px] top-auto h-0 w-0 overflow-hidden" aria-hidden="true">
-        <label htmlFor="empresa_web">No completar este campo</label>
-        <input id="empresa_web" name="empresa_web" type="text" tabIndex={-1} autoComplete="off" ref={honeypotRef} />
+      <div className="hidden" aria-hidden="true">
+        <label htmlFor="campo_verificacion_x7q">No completar este campo</label>
+        <input
+          id="campo_verificacion_x7q"
+          name="campo_verificacion_x7q"
+          type="text"
+          tabIndex={-1}
+          autoComplete="off"
+          ref={honeypotRef}
+        />
       </div>
 
       <Seccion numero="01" total={TOTAL_SECCIONES} titulo="Datos personales">
