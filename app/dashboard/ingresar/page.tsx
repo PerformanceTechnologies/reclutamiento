@@ -11,9 +11,9 @@ export default function IngresarDashboard({
       <Image
         src="/logo-pertec.png"
         alt="Performance Technologies — PERTEC"
-        width={220}
-        height={170}
-        className="h-14 w-auto object-contain"
+        width={280}
+        height={217}
+        className="h-24 w-auto object-contain"
         priority
       />
 
