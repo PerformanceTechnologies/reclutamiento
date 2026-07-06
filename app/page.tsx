@@ -47,7 +47,7 @@ const CONFIANZA = [
 export default function Home() {
   return (
     <div className="flex flex-1 flex-col bg-crema">
-      <header className="border-b border-borde bg-crema">
+      <header className="sticky top-0 z-40 border-b border-borde bg-crema/95 backdrop-blur-sm">
         <div className="mx-auto flex max-w-5xl items-center justify-between px-6 py-5">
           <Image
             src="/logo-pertec.png"
