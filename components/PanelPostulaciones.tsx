@@ -69,7 +69,7 @@ function hace(segundos: number) {
 const inputFiltro =
   "w-full rounded-lg border border-borde bg-white px-3 py-2 text-sm text-tinta outline-none transition focus:border-naranjo focus:ring-2 focus:ring-naranjo/15";
 
-export default function PanelPostulaciones() {
+export default function PanelPostulaciones({ esAdmin }: { esAdmin: boolean }) {
   const [postulaciones, setPostulaciones] = useState<PostulacionGuardada[] | null>(null);
   const [error, setError] = useState<string | null>(null);
   const [actualizadoEn, setActualizadoEn] = useState<Date | null>(null);
@@ -418,7 +418,19 @@ export default function PanelPostulaciones() {
       </div>
 
       {postulanteActivo && (
-        <ModalPostulante postulante={postulanteActivo} onClose={() => setPostulanteActivo(null)} />
+        <ModalPostulante
+          postulante={postulanteActivo}
+          onClose={() => setPostulanteActivo(null)}
+          esAdmin={esAdmin}
+          onEliminado={(id) => {
+            setPostulaciones((actual) => actual?.filter((p) => p.id !== id) ?? null);
+            setSeleccionados((actual) => {
+              const nuevo = new Set(actual);
+              nuevo.delete(id);
+              return nuevo;
+            });
+          }}
+        />
       )}
     </div>
   );

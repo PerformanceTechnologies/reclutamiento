@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import type { PostulacionGuardada } from "@/lib/graph";
 
 function formatearFechaLarga(iso: string) {
@@ -26,10 +26,17 @@ function Campo({ etiqueta, valor }: { etiqueta: string; valor?: string }) {
 export default function ModalPostulante({
   postulante,
   onClose,
+  esAdmin,
+  onEliminado,
 }: {
   postulante: PostulacionGuardada;
   onClose: () => void;
+  esAdmin: boolean;
+  onEliminado: (id: string) => void;
 }) {
+  const [eliminando, setEliminando] = useState(false);
+  const [errorEliminar, setErrorEliminar] = useState<string | null>(null);
+
   useEffect(() => {
     const alTeclado = (e: KeyboardEvent) => {
       if (e.key === "Escape") onClose();
@@ -41,6 +48,24 @@ export default function ModalPostulante({
   const otrosDocumentos = postulante.otrosDocumentosUrl
     ? postulante.otrosDocumentosUrl.split(";").map((s) => s.trim()).filter(Boolean)
     : [];
+
+  async function eliminar() {
+    if (!window.confirm(`¿Eliminar la postulación de ${postulante.nombreCompleto}? Esta acción no se puede deshacer.`)) {
+      return;
+    }
+    setEliminando(true);
+    setErrorEliminar(null);
+    try {
+      const respuesta = await fetch(`/api/postulaciones/${postulante.id}`, { method: "DELETE" });
+      const cuerpo = await respuesta.json();
+      if (!respuesta.ok) throw new Error(cuerpo.error ?? "No pudimos eliminar la postulación.");
+      onEliminado(postulante.id);
+      onClose();
+    } catch (err) {
+      setErrorEliminar(err instanceof Error ? err.message : "No pudimos eliminar la postulación.");
+      setEliminando(false);
+    }
+  }
 
   return (
     <div
@@ -134,6 +159,21 @@ export default function ModalPostulante({
               )}
             </div>
           </section>
+
+          {esAdmin && (
+            <section className="border-t border-borde pt-5">
+              {errorEliminar && (
+                <p className="mb-3 text-sm font-medium text-red-600">{errorEliminar}</p>
+              )}
+              <button
+                onClick={eliminar}
+                disabled={eliminando}
+                className="text-sm font-medium text-red-600 transition hover:underline disabled:opacity-50"
+              >
+                {eliminando ? "Eliminando..." : "Eliminar esta postulación"}
+              </button>
+            </section>
+          )}
         </div>
       </div>
     </div>

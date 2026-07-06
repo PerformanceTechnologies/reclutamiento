@@ -60,7 +60,7 @@ export default async function DashboardPage() {
       </header>
 
       <main className="mx-auto w-full max-w-6xl flex-1 px-6 py-8">
-        <PanelPostulaciones />
+        <PanelPostulaciones esAdmin={session.user?.rol === "admin"} />
       </main>
     </div>
   );

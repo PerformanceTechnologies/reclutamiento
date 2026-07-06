@@ -140,6 +140,11 @@ export async function subirArchivoAPostulacion(
   return { nombre: archivo.nombre, urlWeb: resultado.webUrl };
 }
 
+export async function eliminarPostulacion(id: string): Promise<void> {
+  const graph = await clienteGraph();
+  await graph.api(`/sites/${SITE_ID()}/lists/${ID_LISTA}/items/${id}`).delete();
+}
+
 export async function crearItemPostulacion(
   datos: PostulacionInput,
   archivos: { cv: ArchivoSubido; otros: ArchivoSubido[] }
