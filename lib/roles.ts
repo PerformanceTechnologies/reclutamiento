@@ -1,16 +1,31 @@
-// Control de acceso al dashboard: solo estas cuentas pueden entrar.
-// Para agregar a alguien más del equipo, solo agrega una línea aquí.
+import { buscarRolAutorizado, credencialesGraphConfiguradas } from "./graph";
+
 export type Rol = "admin" | "reclutador";
 
-export const USUARIOS_AUTORIZADOS: Record<string, Rol> = {
-  "hugo.antivil@pertec.cl": "admin",
-};
+// Respaldo fijo: esta cuenta siempre es admin, incluso si la lista de
+// SharePoint quedara vacía o mal configurada por error.
+const ADMIN_DE_RESPALDO = "hugo.antivil@pertec.cl";
 
-export function obtenerRol(correo: string | null | undefined): Rol | null {
-  if (!correo) return null;
-  return USUARIOS_AUTORIZADOS[correo.toLowerCase()] ?? null;
+function esRolValido(valor: string | null): valor is Rol {
+  return valor === "admin" || valor === "reclutador";
 }
 
-export function estaAutorizado(correo: string | null | undefined): boolean {
-  return obtenerRol(correo) !== null;
+export async function obtenerRol(correo: string | null | undefined): Promise<Rol | null> {
+  if (!correo) return null;
+  const correoNormalizado = correo.toLowerCase();
+
+  if (correoNormalizado === ADMIN_DE_RESPALDO) return "admin";
+  if (!credencialesGraphConfiguradas()) return null;
+
+  try {
+    const rol = await buscarRolAutorizado(correoNormalizado);
+    return esRolValido(rol) ? rol : null;
+  } catch (error) {
+    console.error("[roles] Error consultando autorización:", error);
+    return null;
+  }
+}
+
+export async function estaAutorizado(correo: string | null | undefined): Promise<boolean> {
+  return (await obtenerRol(correo)) !== null;
 }

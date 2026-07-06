@@ -4,8 +4,9 @@ import type { PostulacionInput } from "./schema";
 
 const GRAPH_SCOPE = "https://graph.microsoft.com/.default";
 
-// ID de la Lista "Postulaciones" en el sitio RRHHCorporativo (ver SETUP.md).
+// IDs de las Listas en el sitio RRHHCorporativo (ver SETUP.md).
 const ID_LISTA = "f9f9ce5d-99ba-433e-8316-f1ca8a22d945";
+const ID_LISTA_USUARIOS = "d6bd8215-a92d-4bcb-8e94-5901bdf0c8d1";
 
 export function credencialesGraphConfiguradas(): boolean {
   return Boolean(
@@ -166,4 +167,50 @@ export async function crearItemPostulacion(
       OtrosDocumentosUrl: archivos.otros.map((a) => a.urlWeb).join("; "),
     },
   });
+}
+
+export interface UsuarioAutorizado {
+  id: string;
+  correo: string;
+  rol: string;
+}
+
+export async function listarUsuariosAutorizados(): Promise<UsuarioAutorizado[]> {
+  const graph = await clienteGraph();
+  const respuesta = await graph
+    .api(`/sites/${SITE_ID()}/lists/${ID_LISTA_USUARIOS}/items`)
+    .expand("fields")
+    .top(200)
+    .get();
+
+  return (respuesta?.value ?? []).map((item: Record<string, unknown>) => {
+    const f = (item.fields ?? {}) as Record<string, string>;
+    return { id: String(item.id ?? ""), correo: (f.Title ?? "").toLowerCase(), rol: f.Rol ?? "" };
+  });
+}
+
+export async function buscarRolAutorizado(correo: string): Promise<string | null> {
+  const graph = await clienteGraph();
+  const correoNormalizado = correo.toLowerCase().replace(/'/g, "");
+  const respuesta = await graph
+    .api(`/sites/${SITE_ID()}/lists/${ID_LISTA_USUARIOS}/items`)
+    .header("Prefer", "HonorNonIndexedQueriesWarningMayFailRandomly")
+    .expand("fields($select=Title,Rol)")
+    .filter(`fields/Title eq '${correoNormalizado}'`)
+    .get();
+
+  const item = respuesta?.value?.[0];
+  return item?.fields?.Rol ?? null;
+}
+
+export async function agregarUsuarioAutorizado(correo: string, rol: string): Promise<void> {
+  const graph = await clienteGraph();
+  await graph.api(`/sites/${SITE_ID()}/lists/${ID_LISTA_USUARIOS}/items`).post({
+    fields: { Title: correo.toLowerCase(), Rol: rol },
+  });
+}
+
+export async function eliminarUsuarioAutorizado(id: string): Promise<void> {
+  const graph = await clienteGraph();
+  await graph.api(`/sites/${SITE_ID()}/lists/${ID_LISTA_USUARIOS}/items/${id}`).delete();
 }

@@ -18,6 +18,7 @@ const COLUMNAS: { clave: keyof PostulacionGuardada; etiqueta: string }[] = [
   { clave: "comoSeEntero", etiqueta: "Cómo se enteró" },
   { clave: "creadaEn", etiqueta: "Fecha de postulación" },
   { clave: "cvUrl", etiqueta: "Link CV" },
+  { clave: "otrosDocumentosUrl", etiqueta: "Otros documentos" },
 ];
 
 function celda(valor: string) {

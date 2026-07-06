@@ -25,6 +25,10 @@ yo no tengo, así que estos pasos los debes hacer tú (o tu equipo de TI).
      `DisponibilidadFaena`, `Licencias`, `ExamenesVigentes`, `InstitucionExamenes`,
      `ComoSeEntero`, `CVUrl`, `OtrosDocumentosUrl` (todas de tipo texto de una línea sirven).
    - Una **Biblioteca de documentos** (puede ser la biblioteca "Documentos" por defecto).
+   - Una **Lista** llamada `UsuariosDashboard` con una columna `Rol` (texto). El campo
+     `Title` de cada ítem se usa como el correo autorizado. Los admins pueden agregar y quitar
+     gente desde `/dashboard/usuarios` sin volver a tocar esto — esta lista es solo el "motor"
+     que usa esa pantalla.
 3. Como `Sites.Selected` no da acceso automático, debes otorgárselo explícitamente a la app:
    con PowerShell (`Grant-PnPAzureADAppSitePermission`) o vía Graph Explorer, dale permiso
    **write** de tu App Registration sobre este sitio específico.

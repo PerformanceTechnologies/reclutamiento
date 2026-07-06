@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 import { redirect } from "next/navigation";
 import { auth, signOut } from "@/auth";
 import PanelPostulaciones from "@/components/PanelPostulaciones";
@@ -33,6 +34,14 @@ export default async function DashboardPage() {
                 </span>
               )}
             </span>
+            {session.user?.rol === "admin" && (
+              <Link
+                href="/dashboard/usuarios"
+                className="rounded-lg border border-borde px-3 py-1.5 text-xs font-medium text-tinta/70 transition hover:border-naranjo/40 hover:text-naranjo"
+              >
+                Gestionar usuarios
+              </Link>
+            )}
             <form
               action={async () => {
                 "use server";
