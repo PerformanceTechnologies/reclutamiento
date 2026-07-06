@@ -71,6 +71,7 @@ export interface PostulacionGuardada {
   licencias: string;
   examenesVigentes: string;
   institucionExamenes: string;
+  linkedin: string;
   comoSeEntero: string;
   cvUrl: string;
   otrosDocumentosUrl: string;
@@ -112,6 +113,7 @@ export async function listarPostulaciones(): Promise<PostulacionGuardada[]> {
         licencias: f.Licencias ?? "",
         examenesVigentes: f.ExamenesVigentes ?? "",
         institucionExamenes: f.InstitucionExamenes ?? "",
+        linkedin: f.LinkedIn ?? "",
         comoSeEntero: f.ComoSeEntero ?? "",
         cvUrl: f.CVUrl ?? "",
         otrosDocumentosUrl: f.OtrosDocumentosUrl ?? "",
@@ -147,7 +149,7 @@ export async function eliminarPostulacion(id: string): Promise<void> {
 
 export async function crearItemPostulacion(
   datos: PostulacionInput,
-  archivos: { cv: ArchivoSubido; otros: ArchivoSubido[] }
+  archivos: { cv?: ArchivoSubido; otros: ArchivoSubido[] }
 ): Promise<void> {
   const graph = await clienteGraph();
 
@@ -167,8 +169,9 @@ export async function crearItemPostulacion(
       Licencias: datos.licencias.join("; "),
       ExamenesVigentes: datos.examenesVigentes,
       InstitucionExamenes: datos.institucionExamenes ?? "",
+      LinkedIn: datos.linkedin ?? "",
       ComoSeEntero: datos.comoSeEntero,
-      CVUrl: archivos.cv.urlWeb,
+      CVUrl: archivos.cv?.urlWeb ?? "",
       OtrosDocumentosUrl: archivos.otros.map((a) => a.urlWeb).join("; "),
     },
   });

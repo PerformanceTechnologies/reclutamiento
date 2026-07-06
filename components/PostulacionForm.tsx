@@ -90,22 +90,19 @@ export default function PostulacionForm() {
   }
 
   async function onSubmit(datos: PostulacionInput) {
-    if (!cv) {
-      setErrorArchivo("Debes adjuntar tu CV para continuar.");
-      return;
-    }
     setMensajeError(null);
     setEstado("idle");
 
     const formData = new FormData();
     Object.entries(datos).forEach(([clave, valor]) => {
+      if (valor === undefined) return;
       if (Array.isArray(valor)) {
         valor.forEach((v) => formData.append(clave, v));
       } else {
         formData.append(clave, String(valor));
       }
     });
-    formData.append("cv", cv);
+    if (cv) formData.append("cv", cv);
     otros.forEach((archivo) => formData.append("otrosDocumentos", archivo));
     formData.append("tiempoTranscurridoMs", String(Date.now() - montadoEn.current));
     formData.append("empresaWeb", honeypotRef.current?.value ?? "");
@@ -387,7 +384,7 @@ export default function PostulacionForm() {
         descripcion="Formatos permitidos: PDF, Word, JPG o PNG — máximo 8 MB por archivo."
       >
         <div className="sm:col-span-2">
-          <Campo label="Currículum (CV)" required error={errorArchivo ?? undefined}>
+          <Campo label="Currículum (CV)" hint="Opcional." error={errorArchivo ?? undefined}>
             <label className="flex cursor-pointer flex-col items-center justify-center gap-2 rounded-xl border-2 border-dashed border-borde bg-crema/60 px-6 py-8 text-center transition hover:border-naranjo/50">
               <svg viewBox="0 0 24 24" fill="none" className="h-8 w-8 text-naranjo">
                 <path
@@ -399,7 +396,7 @@ export default function PostulacionForm() {
                 />
               </svg>
               <span className="text-sm font-medium text-tinta/80">
-                {cv ? cv.name : "Haz clic para subir tu CV"}
+                {cv ? cv.name : "Haz clic para subir tu CV (opcional)"}
               </span>
               {cv && <span className="text-xs text-tinta/45">{tamanoLegible(cv.size)}</span>}
               <input
@@ -428,6 +425,16 @@ export default function PostulacionForm() {
                 onChange={manejarOtros}
               />
             </label>
+          </Campo>
+        </div>
+
+        <div className="sm:col-span-2">
+          <Campo label="Perfil de LinkedIn" hint="Opcional." error={errors.linkedin?.message}>
+            <input
+              className={inputBase}
+              placeholder="https://linkedin.com/in/tu-nombre"
+              {...register("linkedin")}
+            />
           </Campo>
         </div>
       </Seccion>

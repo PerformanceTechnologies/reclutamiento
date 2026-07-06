@@ -15,6 +15,7 @@ const COLUMNAS: { clave: keyof PostulacionGuardada; etiqueta: string }[] = [
   { clave: "licencias", etiqueta: "Licencias" },
   { clave: "examenesVigentes", etiqueta: "Exámenes vigentes" },
   { clave: "institucionExamenes", etiqueta: "Institución exámenes" },
+  { clave: "linkedin", etiqueta: "LinkedIn" },
   { clave: "comoSeEntero", etiqueta: "Cómo se enteró" },
   { clave: "creadaEn", etiqueta: "Fecha de postulación" },
   { clave: "cvUrl", etiqueta: "Link CV" },

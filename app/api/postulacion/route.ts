@@ -70,6 +70,7 @@ export async function POST(request: Request) {
     licencias: formData.getAll("licencias"),
     examenesVigentes: formData.get("examenesVigentes"),
     institucionExamenes: formData.get("institucionExamenes") || undefined,
+    linkedin: formData.get("linkedin") || undefined,
     comoSeEntero: formData.get("comoSeEntero"),
     autorizacionDatos: formData.get("autorizacionDatos") === "true",
   };
@@ -83,12 +84,12 @@ export async function POST(request: Request) {
   }
   const datos = resultado.data;
 
-  const cv = formData.get("cv") as File | null;
-  if (!cv || cv.size === 0) {
-    return NextResponse.json({ error: "Debes adjuntar tu CV." }, { status: 400 });
+  const cvBruto = formData.get("cv") as File | null;
+  const cv = cvBruto && cvBruto.size > 0 ? cvBruto : null;
+  if (cv) {
+    const errorCv = validarArchivo(cv);
+    if (errorCv) return NextResponse.json({ error: errorCv }, { status: 400 });
   }
-  const errorCv = validarArchivo(cv);
-  if (errorCv) return NextResponse.json({ error: errorCv }, { status: 400 });
 
   const otrosDocumentos = formData.getAll("otrosDocumentos").filter((a): a is File => a instanceof File && a.size > 0);
   for (const archivo of otrosDocumentos) {
@@ -123,11 +124,13 @@ export async function POST(request: Request) {
 
     const carpeta = `${rutNormalizado.replace(/[.\-]/g, "")}-${Date.now()}`;
 
-    const cvSubido = await subirArchivoAPostulacion(carpeta, {
-      nombre: cv.name,
-      buffer: Buffer.from(await cv.arrayBuffer()),
-      tipo: cv.type,
-    });
+    const cvSubido = cv
+      ? await subirArchivoAPostulacion(carpeta, {
+          nombre: cv.name,
+          buffer: Buffer.from(await cv.arrayBuffer()),
+          tipo: cv.type,
+        })
+      : undefined;
 
     const otrosSubidos = [];
     for (const archivo of otrosDocumentos) {

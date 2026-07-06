@@ -214,6 +214,20 @@ export default function PanelPostulaciones({ esAdmin }: { esAdmin: boolean }) {
         </span>
       </div>
 
+      {/* Tarjetas resumen */}
+      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
+        <TarjetaResumen titulo="Postulaciones (filtro)" valor={filtradas.length} />
+        <TarjetaResumen titulo="Últimas 24 horas" valor={ultimas24h} />
+        <TarjetaResumen titulo="Cargo más solicitado" valor={porCargo[0]?.etiqueta ?? "—"} pequeno />
+        <TarjetaResumen titulo="Región líder" valor={porRegion[0]?.etiqueta ?? "—"} pequeno />
+      </div>
+
+      {/* Barras por cargo / región */}
+      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <BarrasDesglose titulo="Por cargo" datos={porCargo} maximo={maxCargo} />
+        <BarrasDesglose titulo="Por región" datos={porRegion} maximo={maxRegion} />
+      </div>
+
       {/* Barra de filtros */}
       <div className="rounded-2xl border border-borde bg-white p-4">
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-5">
@@ -304,20 +318,6 @@ export default function PanelPostulaciones({ esAdmin }: { esAdmin: boolean }) {
             </button>
           )}
         </div>
-      </div>
-
-      {/* Tarjetas resumen */}
-      <div className="grid grid-cols-2 gap-4 sm:grid-cols-4">
-        <TarjetaResumen titulo="Postulaciones (filtro)" valor={filtradas.length} />
-        <TarjetaResumen titulo="Últimas 24 horas" valor={ultimas24h} />
-        <TarjetaResumen titulo="Cargo más solicitado" valor={porCargo[0]?.etiqueta ?? "—"} pequeno />
-        <TarjetaResumen titulo="Región líder" valor={porRegion[0]?.etiqueta ?? "—"} pequeno />
-      </div>
-
-      {/* Barras por cargo / región */}
-      <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
-        <BarrasDesglose titulo="Por cargo" datos={porCargo} maximo={maxCargo} />
-        <BarrasDesglose titulo="Por región" datos={porRegion} maximo={maxRegion} />
       </div>
 
       {/* Tabla */}

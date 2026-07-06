@@ -22,7 +22,7 @@ yo no tengo, así que estos pasos los debes hacer tú (o tu equipo de TI).
 2. Dentro del sitio crea:
    - Una **Lista** llamada `Postulaciones` con las columnas: `RUT`, `FechaNacimiento`,
      `Telefono`, `Correo`, `Region`, `Comuna`, `Cargo`, `Experiencia`, `Turno`,
-     `DisponibilidadFaena`, `Licencias`, `ExamenesVigentes`, `InstitucionExamenes`,
+     `DisponibilidadFaena`, `Licencias`, `ExamenesVigentes`, `InstitucionExamenes`, `LinkedIn`,
      `ComoSeEntero`, `CVUrl`, `OtrosDocumentosUrl` (todas de tipo texto de una línea sirven).
    - Una **Biblioteca de documentos** (puede ser la biblioteca "Documentos" por defecto).
    - Una **Lista** llamada `UsuariosDashboard` con una columna `Rol` (texto). El campo

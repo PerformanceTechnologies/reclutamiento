@@ -154,7 +154,17 @@ export default function ModalPostulante({
                   Otro documento {i + 1}
                 </a>
               ))}
-              {!postulante.cvUrl && otrosDocumentos.length === 0 && (
+              {postulante.linkedin && (
+                <a
+                  href={postulante.linkedin}
+                  target="_blank"
+                  rel="noreferrer"
+                  className="rounded-lg border border-borde px-3 py-1.5 text-sm font-medium text-teal hover:border-teal/40 hover:underline"
+                >
+                  Ver LinkedIn
+                </a>
+              )}
+              {!postulante.cvUrl && !postulante.linkedin && otrosDocumentos.length === 0 && (
                 <p className="text-sm text-tinta/40">Sin documentos.</p>
               )}
             </div>

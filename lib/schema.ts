@@ -47,6 +47,16 @@ export const postulacionSchema = z
     examenesVigentes: z.enum(["Sí", "No"], { error: "Indica si tienes exámenes vigentes" }),
     institucionExamenes: z.string().trim().max(120, "Nombre demasiado largo").optional(),
 
+    linkedin: z
+      .string()
+      .trim()
+      .max(200, "Link demasiado largo")
+      .optional()
+      .refine(
+        (valor) => !valor || /^https?:\/\/([a-z]{2,3}\.)?linkedin\.com\/.+/i.test(valor),
+        "Ingresa un link válido de LinkedIn (ej: https://linkedin.com/in/tu-nombre)"
+      ),
+
     comoSeEntero: z.enum(COMO_SE_ENTERO, { error: "Selecciona una opción" }),
     autorizacionDatos: z.literal(true, {
       error: "Debes autorizar el tratamiento de tus datos personales",
