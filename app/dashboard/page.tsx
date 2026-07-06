@@ -25,7 +25,14 @@ export default async function DashboardPage() {
             </span>
           </div>
           <div className="flex items-center gap-3">
-            <span className="text-sm text-tinta/60">{session.user?.email}</span>
+            <span className="text-sm text-tinta/60">
+              {session.user?.email}
+              {session.user?.rol && (
+                <span className="ml-2 rounded-full bg-teal/10 px-2 py-0.5 text-[11px] font-semibold uppercase text-teal">
+                  {session.user.rol}
+                </span>
+              )}
+            </span>
             <form
               action={async () => {
                 "use server";

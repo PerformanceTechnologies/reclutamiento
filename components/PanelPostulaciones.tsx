@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import type { PostulacionGuardada } from "@/lib/graph";
+import { exportarPostulacionesAExcel } from "@/lib/exportarCsv";
+import ModalPostulante from "./ModalPostulante";
 
 const INTERVALO_ACTUALIZACION_MS = 30_000;
 
@@ -74,6 +76,9 @@ export default function PanelPostulaciones() {
   const [segundosDesde, setSegundosDesde] = useState(0);
   const [cargando, setCargando] = useState(false);
   const [filtros, setFiltros] = useState<Filtros>(FILTROS_VACIOS);
+  const [seleccionados, setSeleccionados] = useState<Set<string>>(new Set());
+  const [postulanteActivo, setPostulanteActivo] = useState<PostulacionGuardada | null>(null);
+  const [ahora, setAhora] = useState<number | null>(null);
 
   const cargar = useCallback(async () => {
     setCargando(true);
@@ -92,9 +97,12 @@ export default function PanelPostulaciones() {
   }, []);
 
   useEffect(() => {
-    cargar();
+    const primeraCarga = setTimeout(cargar, 0);
     const intervalo = setInterval(cargar, INTERVALO_ACTUALIZACION_MS);
-    return () => clearInterval(intervalo);
+    return () => {
+      clearTimeout(primeraCarga);
+      clearInterval(intervalo);
+    };
   }, [cargar]);
 
   useEffect(() => {
@@ -105,6 +113,11 @@ export default function PanelPostulaciones() {
     return () => clearInterval(tick);
   }, [actualizadoEn]);
 
+  useEffect(() => {
+    const tick = setInterval(() => setAhora(Date.now()), 1000);
+    return () => clearInterval(tick);
+  }, []);
+
   const opcionesCargo = useMemo(() => opcionesUnicas(postulaciones ?? [], "cargo"), [postulaciones]);
   const opcionesRegion = useMemo(() => opcionesUnicas(postulaciones ?? [], "region"), [postulaciones]);
   const opcionesTurno = useMemo(() => opcionesUnicas(postulaciones ?? [], "turno"), [postulaciones]);
@@ -113,33 +126,64 @@ export default function PanelPostulaciones() {
     if (!postulaciones) return [];
     const busqueda = filtros.busqueda.trim().toLowerCase();
     const limiteMs = MS_POR_RANGO[filtros.rango];
-    const ahora = Date.now();
+    const momentoActual = ahora ?? 0;
 
     return postulaciones.filter((p) => {
       if (filtros.cargo && p.cargo !== filtros.cargo) return false;
       if (filtros.region && p.region !== filtros.region) return false;
       if (filtros.turno && p.turno !== filtros.turno) return false;
-      if (limiteMs && (!p.creadaEn || ahora - new Date(p.creadaEn).getTime() > limiteMs)) return false;
+      if (limiteMs && (!p.creadaEn || momentoActual - new Date(p.creadaEn).getTime() > limiteMs))
+        return false;
       if (busqueda) {
         const texto = `${p.nombreCompleto} ${p.rut} ${p.correo}`.toLowerCase();
         if (!texto.includes(busqueda)) return false;
       }
       return true;
     });
-  }, [postulaciones, filtros]);
+  }, [postulaciones, filtros, ahora]);
 
   const hayFiltrosActivos =
     filtros.busqueda !== "" || filtros.cargo !== "" || filtros.region !== "" || filtros.turno !== "" || filtros.rango !== "todos";
+
+  const todasSeleccionadas =
+    filtradas.length > 0 && filtradas.every((p) => seleccionados.has(p.id));
+
+  const alternarSeleccion = (id: string) => {
+    setSeleccionados((actual) => {
+      const nuevo = new Set(actual);
+      if (nuevo.has(id)) nuevo.delete(id);
+      else nuevo.add(id);
+      return nuevo;
+    });
+  };
+
+  const alternarSeleccionTodos = () => {
+    setSeleccionados((actual) => {
+      if (todasSeleccionadas) {
+        const nuevo = new Set(actual);
+        filtradas.forEach((p) => nuevo.delete(p.id));
+        return nuevo;
+      }
+      const nuevo = new Set(actual);
+      filtradas.forEach((p) => nuevo.add(p.id));
+      return nuevo;
+    });
+  };
+
+  const exportarSeleccionadas = () => {
+    const lista = filtradas.filter((p) => seleccionados.has(p.id));
+    if (lista.length > 0) exportarPostulacionesAExcel(lista);
+  };
 
   const porCargo = useMemo(() => contarPor(filtradas, "cargo"), [filtradas]);
   const porRegion = useMemo(() => contarPor(filtradas, "region"), [filtradas]);
 
   const ultimas24h = useMemo(() => {
-    const ahora = Date.now();
+    const momentoActual = ahora ?? 0;
     return filtradas.filter(
-      (p) => p.creadaEn && ahora - new Date(p.creadaEn).getTime() < 24 * 60 * 60 * 1000
+      (p) => p.creadaEn && momentoActual - new Date(p.creadaEn).getTime() < 24 * 60 * 60 * 1000
     ).length;
-  }, [filtradas]);
+  }, [filtradas, ahora]);
 
   const maxCargo = porCargo[0]?.total ?? 1;
   const maxRegion = porRegion[0]?.total ?? 1;
@@ -278,16 +322,41 @@ export default function PanelPostulaciones() {
 
       {/* Tabla */}
       <div className="rounded-2xl border border-borde bg-white">
-        <div className="border-b border-borde px-6 py-4">
+        <div className="flex flex-wrap items-center justify-between gap-3 border-b border-borde px-6 py-4">
           <h2 className="font-condensed text-lg font-bold uppercase text-tinta">
             Postulaciones {hayFiltrosActivos ? "filtradas" : "recientes"}
           </h2>
+          <button
+            onClick={exportarSeleccionadas}
+            disabled={seleccionados.size === 0}
+            className="inline-flex items-center gap-2 rounded-lg border border-borde px-3 py-1.5 text-xs font-semibold text-tinta/70 transition hover:border-teal/40 hover:text-teal disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            <svg viewBox="0 0 20 20" fill="none" className="h-3.5 w-3.5">
+              <path
+                d="M10 3v9m0 0l-3-3m3 3l3-3M4 14v1a2 2 0 002 2h8a2 2 0 002-2v-1"
+                stroke="currentColor"
+                strokeWidth="1.6"
+                strokeLinecap="round"
+                strokeLinejoin="round"
+              />
+            </svg>
+            Exportar a Excel {seleccionados.size > 0 && `(${seleccionados.size})`}
+          </button>
         </div>
         <div className="overflow-x-auto">
           <table className="w-full text-left text-sm">
             <thead>
               <tr className="border-b border-borde text-xs uppercase tracking-wide text-tinta/45">
-                <th className="px-6 py-3 font-medium">Nombre</th>
+                <th className="w-10 px-4 py-3">
+                  <input
+                    type="checkbox"
+                    checked={todasSeleccionadas}
+                    onChange={alternarSeleccionTodos}
+                    className="h-4 w-4 accent-naranjo"
+                    aria-label="Seleccionar todas"
+                  />
+                </th>
+                <th className="px-2 py-3 font-medium">Nombre</th>
                 <th className="px-4 py-3 font-medium">RUT</th>
                 <th className="px-4 py-3 font-medium">Cargo</th>
                 <th className="px-4 py-3 font-medium">Región</th>
@@ -298,14 +367,27 @@ export default function PanelPostulaciones() {
             </thead>
             <tbody>
               {filtradas.map((p) => (
-                <tr key={p.id} className="border-b border-borde/60 last:border-b-0">
-                  <td className="px-6 py-3 font-medium text-tinta">{p.nombreCompleto}</td>
+                <tr
+                  key={p.id}
+                  onClick={() => setPostulanteActivo(p)}
+                  className="cursor-pointer border-b border-borde/60 transition hover:bg-crema/60 last:border-b-0"
+                >
+                  <td className="px-4 py-3" onClick={(e) => e.stopPropagation()}>
+                    <input
+                      type="checkbox"
+                      checked={seleccionados.has(p.id)}
+                      onChange={() => alternarSeleccion(p.id)}
+                      className="h-4 w-4 accent-naranjo"
+                      aria-label={`Seleccionar ${p.nombreCompleto}`}
+                    />
+                  </td>
+                  <td className="px-2 py-3 font-medium text-tinta">{p.nombreCompleto}</td>
                   <td className="px-4 py-3 text-tinta/70">{p.rut}</td>
                   <td className="px-4 py-3 text-tinta/70">{p.cargo}</td>
                   <td className="px-4 py-3 text-tinta/70">{p.region}</td>
                   <td className="px-4 py-3 text-tinta/70">{p.telefono}</td>
                   <td className="px-4 py-3 text-tinta/50">{formatearFecha(p.creadaEn)}</td>
-                  <td className="px-6 py-3">
+                  <td className="px-6 py-3" onClick={(e) => e.stopPropagation()}>
                     {p.cvUrl ? (
                       <a
                         href={p.cvUrl}
@@ -323,7 +405,7 @@ export default function PanelPostulaciones() {
               ))}
               {filtradas.length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-10 text-center text-tinta/45">
+                  <td colSpan={8} className="px-6 py-10 text-center text-tinta/45">
                     {postulaciones && postulaciones.length > 0
                       ? "Ningún resultado coincide con los filtros."
                       : "Aún no hay postulaciones registradas."}
@@ -334,6 +416,10 @@ export default function PanelPostulaciones() {
           </table>
         </div>
       </div>
+
+      {postulanteActivo && (
+        <ModalPostulante postulante={postulanteActivo} onClose={() => setPostulanteActivo(null)} />
+      )}
     </div>
   );
 }

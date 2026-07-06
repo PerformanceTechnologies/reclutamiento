@@ -22,7 +22,7 @@ export default function IngresarDashboard({
           Dashboard de Postulaciones
         </h1>
         <p className="mt-2 text-sm text-tinta/60">
-          Acceso exclusivo para el equipo de PERTEC con cuenta @pertec.cl.
+          Acceso exclusivo para cuentas autorizadas del equipo de PERTEC.
         </p>
 
         <form
@@ -54,7 +54,8 @@ async function ErrorAcceso({
   if (!error) return null;
   return (
     <p className="mt-4 text-xs font-medium text-red-600">
-      Tu cuenta no tiene acceso a este panel. Debes usar una cuenta @pertec.cl.
+      Tu cuenta no está autorizada para acceder a este panel. Contacta al administrador si
+      crees que deberías tener acceso.
     </p>
   );
 }

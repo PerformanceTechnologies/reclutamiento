@@ -1,7 +1,6 @@
 import NextAuth from "next-auth";
 import MicrosoftEntraID from "next-auth/providers/microsoft-entra-id";
-
-const DOMINIO_PERMITIDO = "@pertec.cl";
+import { estaAutorizado, obtenerRol, type Rol } from "@/lib/roles";
 
 export const { handlers, auth, signIn, signOut } = NextAuth({
   providers: [MicrosoftEntraID],
@@ -9,10 +8,16 @@ export const { handlers, auth, signIn, signOut } = NextAuth({
   pages: { signIn: "/dashboard/ingresar" },
   callbacks: {
     signIn({ profile }) {
-      const correo = (profile?.email ?? "").toLowerCase();
-      return correo.endsWith(DOMINIO_PERMITIDO);
+      return estaAutorizado(profile?.email);
     },
-    session({ session }) {
+    jwt({ token }) {
+      token.rol = obtenerRol(token.email);
+      return token;
+    },
+    session({ session, token }) {
+      if (session.user) {
+        session.user.rol = (token.rol as Rol | undefined) ?? null;
+      }
       return session;
     },
   },

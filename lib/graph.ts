@@ -58,6 +58,7 @@ export interface PostulacionGuardada {
   creadaEn: string;
   nombreCompleto: string;
   rut: string;
+  fechaNacimiento: string;
   telefono: string;
   correo: string;
   region: string;
@@ -68,8 +69,10 @@ export interface PostulacionGuardada {
   disponibilidadFaena: string;
   licencias: string;
   examenesVigentes: string;
+  institucionExamenes: string;
   comoSeEntero: string;
   cvUrl: string;
+  otrosDocumentosUrl: string;
 }
 
 const MAX_PAGINAS = 10;
@@ -96,6 +99,7 @@ export async function listarPostulaciones(): Promise<PostulacionGuardada[]> {
         creadaEn: String(item.createdDateTime ?? ""),
         nombreCompleto: f.Title ?? "",
         rut: f.RUT ?? "",
+        fechaNacimiento: f.FechaNacimiento ?? "",
         telefono: f.Telefono ?? "",
         correo: f.Correo ?? "",
         region: f.Region ?? "",
@@ -106,8 +110,10 @@ export async function listarPostulaciones(): Promise<PostulacionGuardada[]> {
         disponibilidadFaena: f.DisponibilidadFaena ?? "",
         licencias: f.Licencias ?? "",
         examenesVigentes: f.ExamenesVigentes ?? "",
+        institucionExamenes: f.InstitucionExamenes ?? "",
         comoSeEntero: f.ComoSeEntero ?? "",
         cvUrl: f.CVUrl ?? "",
+        otrosDocumentosUrl: f.OtrosDocumentosUrl ?? "",
       };
     })
     .sort((a, b) => (a.creadaEn < b.creadaEn ? 1 : -1));
