@@ -42,6 +42,21 @@ En Vercel, agrégalas en **Settings → Environment Variables** (Production y Pr
 **Settings → Domains** → agrega `postular.pertec.cl` → sigue la instrucción de Vercel
 para crear el registro **CNAME** en el proveedor DNS de pertec.cl.
 
+## 4.1 Dashboard interno (/dashboard)
+
+El panel en `/dashboard` reutiliza el mismo App Registration para el login (solo cuentas
+`@pertec.cl` pueden entrar). Pasos adicionales:
+
+1. En el App Registration → **Autenticación** → **+ Agregar una plataforma** → **Web** →
+   agrega como URI de redirección:
+   - `https://postular.pertec.cl/api/auth/callback/microsoft-entra-id`
+   - `http://localhost:3000/api/auth/callback/microsoft-entra-id` (para probar en local)
+2. Variables de entorno adicionales (ver `.env.example`):
+   - `AUTH_SECRET`: genera uno con `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
+   - `AUTH_MICROSOFT_ENTRA_ID_ID`: el mismo valor que `AZURE_CLIENT_ID`
+   - `AUTH_MICROSOFT_ENTRA_ID_SECRET`: el mismo valor que `AZURE_CLIENT_SECRET`
+   - `AUTH_MICROSOFT_ENTRA_ID_ISSUER`: `https://login.microsoftonline.com/<AZURE_TENANT_ID>/v2.0`
+
 ## 5. Notificación automática (Power Automate)
 
 En [Power Automate](https://make.powerautomate.com): **Crear flujo automatizado** → trigger

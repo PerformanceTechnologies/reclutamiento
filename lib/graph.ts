@@ -53,6 +53,66 @@ export async function existeRutDuplicado(rut: string): Promise<boolean> {
   return Array.isArray(respuesta?.value) && respuesta.value.length > 0;
 }
 
+export interface PostulacionGuardada {
+  id: string;
+  creadaEn: string;
+  nombreCompleto: string;
+  rut: string;
+  telefono: string;
+  correo: string;
+  region: string;
+  comuna: string;
+  cargo: string;
+  experiencia: string;
+  turno: string;
+  disponibilidadFaena: string;
+  licencias: string;
+  examenesVigentes: string;
+  comoSeEntero: string;
+  cvUrl: string;
+}
+
+const MAX_PAGINAS = 10;
+
+export async function listarPostulaciones(): Promise<PostulacionGuardada[]> {
+  const graph = await clienteGraph();
+  const items: Record<string, unknown>[] = [];
+
+  let siguiente: string | undefined = `/sites/${SITE_ID()}/lists/${ID_LISTA}/items?$expand=fields&$top=200`;
+  let paginas = 0;
+
+  while (siguiente && paginas < MAX_PAGINAS) {
+    const respuesta = await graph.api(siguiente).get();
+    items.push(...(respuesta?.value ?? []));
+    siguiente = respuesta?.["@odata.nextLink"];
+    paginas++;
+  }
+
+  return items
+    .map((item) => {
+      const f = (item.fields ?? {}) as Record<string, string>;
+      return {
+        id: String(item.id ?? ""),
+        creadaEn: String(item.createdDateTime ?? ""),
+        nombreCompleto: f.Title ?? "",
+        rut: f.RUT ?? "",
+        telefono: f.Telefono ?? "",
+        correo: f.Correo ?? "",
+        region: f.Region ?? "",
+        comuna: f.Comuna ?? "",
+        cargo: f.Cargo ?? "",
+        experiencia: f.Experiencia ?? "",
+        turno: f.Turno ?? "",
+        disponibilidadFaena: f.DisponibilidadFaena ?? "",
+        licencias: f.Licencias ?? "",
+        examenesVigentes: f.ExamenesVigentes ?? "",
+        comoSeEntero: f.ComoSeEntero ?? "",
+        cvUrl: f.CVUrl ?? "",
+      };
+    })
+    .sort((a, b) => (a.creadaEn < b.creadaEn ? 1 : -1));
+}
+
 interface ArchivoSubido {
   nombre: string;
   urlWeb: string;
