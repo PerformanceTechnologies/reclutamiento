@@ -26,6 +26,12 @@ export default async function DashboardPage() {
             </span>
           </div>
           <div className="flex items-center gap-3">
+            <a
+              href="https://core.pertec.cl"
+              className="rounded-lg border border-borde px-3 py-1.5 text-xs font-medium text-tinta/70 transition hover:border-naranjo/40 hover:text-naranjo"
+            >
+              ← Volver al Core
+            </a>
             <span className="text-sm text-tinta/60">
               {session.user?.email}
               {session.user?.rol && (
