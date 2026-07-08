@@ -25,10 +25,6 @@ yo no tengo, así que estos pasos los debes hacer tú (o tu equipo de TI).
      `DisponibilidadFaena`, `Licencias`, `ExamenesVigentes`, `InstitucionExamenes`, `LinkedIn`,
      `ComoSeEntero`, `CVUrl`, `OtrosDocumentosUrl` (todas de tipo texto de una línea sirven).
    - Una **Biblioteca de documentos** (puede ser la biblioteca "Documentos" por defecto).
-   - Una **Lista** llamada `UsuariosDashboard` con una columna `Rol` (texto). El campo
-     `Title` de cada ítem se usa como el correo autorizado. Los admins pueden agregar y quitar
-     gente desde `/dashboard/usuarios` sin volver a tocar esto — esta lista es solo el "motor"
-     que usa esa pantalla.
 3. Como `Sites.Selected` no da acceso automático, debes otorgárselo explícitamente a la app:
    con PowerShell (`Grant-PnPAzureADAppSitePermission`) o vía Graph Explorer, dale permiso
    **write** de tu App Registration sobre este sitio específico.
@@ -46,20 +42,9 @@ En Vercel, agrégalas en **Settings → Environment Variables** (Production y Pr
 **Settings → Domains** → agrega `postular.pertec.cl` → sigue la instrucción de Vercel
 para crear el registro **CNAME** en el proveedor DNS de pertec.cl.
 
-## 4.1 Dashboard interno (/dashboard)
-
-El panel en `/dashboard` reutiliza el mismo App Registration para el login (solo cuentas
-`@pertec.cl` pueden entrar). Pasos adicionales:
-
-1. En el App Registration → **Autenticación** → **+ Agregar una plataforma** → **Web** →
-   agrega como URI de redirección:
-   - `https://postular.pertec.cl/api/auth/callback/microsoft-entra-id`
-   - `http://localhost:3000/api/auth/callback/microsoft-entra-id` (para probar en local)
-2. Variables de entorno adicionales (ver `.env.example`):
-   - `AUTH_SECRET`: genera uno con `node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"`
-   - `AUTH_MICROSOFT_ENTRA_ID_ID`: el mismo valor que `AZURE_CLIENT_ID`
-   - `AUTH_MICROSOFT_ENTRA_ID_SECRET`: el mismo valor que `AZURE_CLIENT_SECRET`
-   - `AUTH_MICROSOFT_ENTRA_ID_ISSUER`: `https://login.microsoftonline.com/<AZURE_TENANT_ID>/v2.0`
+> El panel interno donde el equipo revisa las postulaciones ya no vive en este proyecto —
+> se administra desde `core.pertec.cl/reclutamiento`, reutilizando este mismo App
+> Registration solo para autenticar el acceso de servidor a servidor con Microsoft Graph.
 
 ## 5. Notificación automática (Power Automate)
 
